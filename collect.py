@@ -7,7 +7,8 @@ import argparse
 import subprocess
 
 def collect(continue_with_file=None):
-
+    continue_with_file = None if continue_with_file == 'None' else continue_with_file
+    
     index_file_batch_path_ = glob('/content/drive/MyDrive/commoncrowl/aze*')[0] if not continue_with_file else '/content/drive/MyDrive/commoncrowl/__{}.tar.gz'.format(continue_with_file)
     index_file_batch_path  = index_file_batch_path_.replace('commoncrowl/aze', 'commoncrowl/__aze').replace('commoncrowl/arm', 'commoncrowl/__arm')
     if not continue_with_file:
