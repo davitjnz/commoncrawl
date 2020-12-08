@@ -1,4 +1,3 @@
-terminated_file
 def collect(terminated_file):
 
     index_file_batch_path_ = glob('/content/drive/MyDrive/commoncrowl/aze*')[0] if not terminated_file else '/content/drive/MyDrive/commoncrowl/__{}.tar.gz'.format(terminated_file)
