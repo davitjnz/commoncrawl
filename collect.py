@@ -118,9 +118,14 @@ def collect(runner_id, **kwargs):
     """
     lang, index_dir, data_dir, work_dir, save_on = kwargs["lang"], kwargs["index_dir"], kwargs["data_dir"], kwargs["work_dir"], kwargs["save_on"]
     
-    system('mkdir {}/indexes'.format(work_dir))
-    system('mkdir {}/text'.format(work_dir))
+    system('mkdir -p {}/indexes'.format(work_dir))
+    system('mkdir -p {}/text'.format(work_dir))
 
+    system('rm -f {}/indexes/*'.format(work_dir))
+    system('rm -f {}/text/*'.format(work_dir))
+
+    system('rm -f {}/indexes.txt'.format(work_dir))
+    system('rm -f {}/*warc.gz'.format(work_dir))
 
     batch_name, start_from = get_batch(runner_id, lang, index_dir, data_dir)
 
