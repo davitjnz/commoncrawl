@@ -93,7 +93,7 @@ def save_data(runner_id, batch_name, data_dir, work_dir, line_index, lines_lengh
         line_index = str(line_index),
         work_dir = work_dir
     ))
-    raise('hhhh')
+
     system('cp {work_dir}/text/{batch_name}-{line_index}.tar.gz {data_dir}/'.format(
         batch_name = batch_name, 
         line_index = str(line_index), 
