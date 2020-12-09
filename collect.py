@@ -143,10 +143,10 @@ def collect(runner_id, **kwargs):
     
     start_date = datetime.now()
     
-    if batch_name not in kwargs:
+    if 'batch_name' not in kwargs:
         batch_name, start_from = get_batch(runner_id, lang, index_dir, data_dir)
     else:
-        batch_name, start_from = kwargs["batch_name"], kwargs["start_from"]
+        batch_name, start_from = kwargs['batch_name'], kwargs['start_from']
 
     index_file_batch_path = '{}/{}.tar.gz'.format(index_dir, batch_name)
     
