@@ -148,7 +148,7 @@ def collect(runner_id, **kwargs):
 
     print('batch_name:', batch_name, 'starting from', start_from, 'of', lines_lenght)
     
-    set(data_dir, runner_id, "total", lines_lenght)
+    #set(data_dir, runner_id, "total", lines_lenght)
 
     for line_index in range(lines_lenght):
         if line_index < start_from + 1:
