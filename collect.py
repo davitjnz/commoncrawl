@@ -191,7 +191,8 @@ def collect(runner_id, **kwargs):
             data_dir = data_dir, 
             work_dir = work_dir, 
             batch_name = batch_name,
-            start_from = 0)
+            start_from = 0,
+            save_on = save_on)
 
 
 if __name__ == '__main__':
