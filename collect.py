@@ -112,6 +112,12 @@ def save_data(runner_id, batch_name, data_dir, work_dir, line_index, lines_lengh
     df.to_csv('{}/register.csv'.format(data_dir), index=None)
     
 
+def set(data_dir, runner_id, col, val):
+    df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
+    index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
+    df.at[index, col] = val
+    df.to_csv('{}/register.csv'.format(data_dir), index=None)
+
 def collect(runner_id, **kwargs):
     """
         Start data collection process
@@ -126,7 +132,9 @@ def collect(runner_id, **kwargs):
 
     system('rm -f {}/indexes.txt'.format(work_dir))
     system('rm -f {}/*warc.gz'.format(work_dir))
-
+    
+    start_date = datetime.now()
+    
     batch_name, start_from = get_batch(runner_id, lang, index_dir, data_dir)
 
     index_file_batch_path = '{}/{}.tar.gz'.format(index_dir, batch_name)
@@ -136,12 +144,12 @@ def collect(runner_id, **kwargs):
     lines_lenght_ = subprocess.getoutput('wc -l ./indexes.txt')
     lines_lenght = int(lines_lenght_.split(' ')[0])
 
-    start_date = datetime.now()
-
     index_file = open('./indexes.txt', 'r')
 
     print('batch_name:', batch_name, 'starting from', start_from, 'of', lines_lenght)
     
+    set(data_dir, runner_id, "total", lines_lenght)
+
     for line_index in range(lines_lenght):
         if line_index < start_from + 1:
             continue
@@ -159,10 +167,7 @@ def collect(runner_id, **kwargs):
     system('rm {}/indexes.txt'.format(work_dir))
     system('rm {}/text/*'.format(work_dir))
     
-    df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
-    index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
-    df.at[index, "status"] = 'complated'
-    df.to_csv('{}/register.csv'.format(data_dir), index=None)
+    set(data_dir, runner_id, 'status', 'complated')
 
     collect(runner_id, lang, index_dir, data_dir, work_dir)
 
