@@ -112,7 +112,7 @@ def save_data(runner_id, batch_name, data_dir, work_dir, line_index, lines_lengh
     df.to_csv('{}/register.csv'.format(data_dir), index=None)
     
 
-def set(data_dir, runner_id, col, val):
+def set_df(data_dir, runner_id, col, val):
     df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
     index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
     df.at[index, col] = val
@@ -167,7 +167,7 @@ def collect(runner_id, **kwargs):
     system('rm {}/indexes.txt'.format(work_dir))
     system('rm {}/text/*'.format(work_dir))
     
-    set(data_dir, runner_id, 'status', 'complated')
+    set_df(data_dir, runner_id, 'status', 'complated')
 
     collect(runner_id, lang, index_dir, data_dir, work_dir)
 
