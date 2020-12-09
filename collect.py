@@ -18,23 +18,28 @@ def get_batch(runner_id, lang, index_dir, data_dir):
     
     if running.shape[0] != 0:
         batch_name = running.iloc[0].batch_name
-        index_file_batch_path = '{}/{}.tar.gz'.format(index_dir, batch_name)
         start_from = running.iloc[0].collected_lines_count
     else:
-        batch_names = [ a.split('/')[-1].replace('.tar.gz', '') for a in glob('{}/{}*.tar.gz'.format(index_dir, lang))]
-        avaliable_batches = list(set(batch_names) - set(df.batch_name.values))
-        if len(avaliable_batches) == 0:
-            raise Exception("No index batches left")
-        
-        batch_name = avaliable_batches[0]
+        batch_name = get_new_batch(df, index_dir, lang)
 
-        index_file_batch_path = '{}/{}.tar.gz'.format(index_dir, batch_name)
         start_from = 0
         
         df = df.append({"runner_id": runner_id, "status": 'running', "collected_lines_count": 0, "batch_name": batch_name}, ignore_index=True)
         df.to_csv('{}/register.csv'.format(data_dir), index=None)
 
     return batch_name, start_from
+
+
+def get_new_batch(df, index_dir, lang):
+
+    batch_names = [ a.split('/')[-1].replace('.tar.gz', '') for a in glob('{}/{}*.tar.gz'.format(index_dir, lang))]
+    avaliable_batches = list(set(batch_names) - set(df.batch_name.values))
+    if len(avaliable_batches) == 0:
+        raise Exception("No index batches left")
+    
+    batch_name = avaliable_batches[0]
+
+    return  batch_name
 
 
 def download_and_extract_batch_file(index_file_batch_path, work_dir):
@@ -112,11 +117,14 @@ def save_data(runner_id, batch_name, data_dir, work_dir, line_index, lines_lengh
     df.to_csv('{}/register.csv'.format(data_dir), index=None)
     
 
+
 def set_df(data_dir, runner_id, col, val):
     df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
     index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
     df.at[index, col] = val
     df.to_csv('{}/register.csv'.format(data_dir), index=None)
+
+
 
 def collect(runner_id, **kwargs):
     """
@@ -135,7 +143,10 @@ def collect(runner_id, **kwargs):
     
     start_date = datetime.now()
     
-    batch_name, start_from = get_batch(runner_id, lang, index_dir, data_dir)
+    if batch_name not in kwargs:
+        batch_name, start_from = get_batch(runner_id, lang, index_dir, data_dir)
+    else:
+        batch_name, start_from = kwargs["batch_name"], kwargs["start_from"]
 
     index_file_batch_path = '{}/{}.tar.gz'.format(index_dir, batch_name)
     
@@ -147,8 +158,6 @@ def collect(runner_id, **kwargs):
     index_file = open('./indexes.txt', 'r')
 
     print('batch_name:', batch_name, 'starting from', start_from, 'of', lines_lenght)
-    
-    #set(data_dir, runner_id, "total", lines_lenght)
 
     for line_index in range(lines_lenght):
         if line_index < start_from + 1:
@@ -167,9 +176,22 @@ def collect(runner_id, **kwargs):
     system('rm {}/indexes.txt'.format(work_dir))
     system('rm {}/text/*'.format(work_dir))
     
-    set_df(data_dir, runner_id, 'status', 'complated')
-
-    collect(runner_id, lang, index_dir, data_dir, work_dir)
+    df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
+    index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
+    df.at[index, 'status'] = 'complated'
+    
+    batch_name = get_new_batch(df, index_dir, lang)
+    
+    df = df.append({"runner_id": runner_id, "status": 'running', "collected_lines_count": 0, "batch_name": batch_name}, ignore_index=True)
+    df.to_csv('{}/register.csv'.format(data_dir), index=None)
+    
+    collect(runner_id, 
+            lang = lang, 
+            index_dir = index_dir, 
+            data_dir = data_dir, 
+            work_dir = work_dir, 
+            batch_name = batch_name,
+            start_from = 0)
 
 
 if __name__ == '__main__':
