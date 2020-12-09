@@ -107,7 +107,7 @@ def save_data(runner_id, batch_name, data_dir, work_dir, line_index, lines_lengh
     ))
 
     df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
-    running = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
+    index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
     df.at[index, "collected_lines_count"] = line_index
     df.to_csv('{}/register.csv'.format(data_dir), index=None)
     
@@ -155,7 +155,7 @@ def collect(runner_id, **kwargs):
     system('rm {}/text/*'.format(work_dir))
     
     df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
-    running = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
+    index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
     df.at[index, "status"] = 'complated'
     df.to_csv('{}/register.csv'.format(data_dir), index=None)
 
