@@ -13,7 +13,7 @@ def get_batch(runner_id, lang, index_dir, data_dir):
         Get running or first avaliable batch name and line from whitch to start data collection 
     """
 
-    df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
+    df = pd.read_csv('{}/register-{}.csv'.format(data_dir, runner_id), index_col=None)
     running = df[(df.runner_id == runner_id) & (df.status == 'running')]
     
     if running.shape[0] != 0:
@@ -25,7 +25,7 @@ def get_batch(runner_id, lang, index_dir, data_dir):
         start_from = 0
         
         df = df.append({"runner_id": runner_id, "status": 'running', "collected_lines_count": 0, "batch_name": batch_name}, ignore_index=True)
-        df.to_csv('{}/register.csv'.format(data_dir), index=None)
+        df.to_csv('{}/register-{}.csv'.format(data_dir, runner_id), index=None)
 
     return batch_name, start_from
 
@@ -111,18 +111,10 @@ def save_data(runner_id, batch_name, data_dir, work_dir, line_index, lines_lengh
         work_dir = work_dir
     ))
 
-    df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
+    df = pd.read_csv('{}/register-{}.csv'.format(data_dir, runner_id), index_col=None)
     index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
     df.at[index, "collected_lines_count"] = line_index
-    df.to_csv('{}/register.csv'.format(data_dir), index=None)
-    
-
-
-def set_df(data_dir, runner_id, col, val):
-    df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
-    index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
-    df.at[index, col] = val
-    df.to_csv('{}/register.csv'.format(data_dir), index=None)
+    df.to_csv('{}/register-{}.csv'.format(data_dir, runner_id), index=None)
 
 
 
@@ -176,14 +168,14 @@ def collect(runner_id, **kwargs):
     system('rm {}/indexes.txt'.format(work_dir))
     system('rm {}/text/*'.format(work_dir))
     
-    df = pd.read_csv('{}/register.csv'.format(data_dir), index_col=None)
+    df = pd.read_csv('{}/register-{}.csv'.format(data_dir, runner_id), index_col=None)
     index = df[(df.runner_id == runner_id) & (df.status == 'running')].index[0]
     df.at[index, 'status'] = 'complated'
     
     batch_name = get_new_batch(df, index_dir, lang)
     
     df = df.append({"runner_id": runner_id, "status": 'running', "collected_lines_count": 0, "batch_name": batch_name}, ignore_index=True)
-    df.to_csv('{}/register.csv'.format(data_dir), index=None)
+    df.to_csv('{}/register-{}.csv'.format(data_dir, runner_id), index=None)
     
     collect(runner_id, 
             lang = lang, 
