@@ -20,7 +20,7 @@ def get_batch(runner_id, lang, index_dir, data_dir):
         batch_name = running.iloc[0].batch_name
         start_from = running.iloc[0].collected_lines_count
     else:
-        batch_name = get_new_batch(df, index_dir, lang)
+        batch_name = get_new_batch(data_dir, index_dir, lang)
 
         start_from = 0
         
@@ -30,10 +30,17 @@ def get_batch(runner_id, lang, index_dir, data_dir):
     return batch_name, start_from
 
 
-def get_new_batch(df, index_dir, lang):
+def get_new_batch(data_dir, index_dir, lang):
 
     batch_names = [ a.split('/')[-1].replace('.tar.gz', '') for a in glob('{}/{}*.tar.gz'.format(index_dir, lang))]
-    avaliable_batches = list(set(batch_names) - set(df.batch_name.values))
+    
+    dfs = []
+    for path in glob('{}/register-*.csv'.format(data_dir)):
+        dfs.append(pd.read_csv(path, index_col=None))
+    df_ = pd.concat(dfs)
+    
+    avaliable_batches = list(set(batch_names) - set(df_.batch_name.values))
+    
     if len(avaliable_batches) == 0:
         raise Exception("No index batches left")
     
