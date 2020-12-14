@@ -35,6 +35,8 @@ def get_new_batch(data_dir, index_dir, lang):
     batch_names = [ a.split('/')[-1].replace('.tar.gz', '') for a in glob('{}/{}*.tar.gz'.format(index_dir, lang))]
     
     dfs = []
+    print('{}/register-*.csv'.format(data_dir))
+    print(glob('{}/register-*.csv'.format(data_dir)))
     for path in glob('{}/register-*.csv'.format(data_dir)):
         dfs.append(pd.read_csv(path, index_col=None))
     df_ = pd.concat(dfs)
