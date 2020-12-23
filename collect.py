@@ -199,8 +199,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser('Collect Data From CommonCrawl')
     parser.add_argument('--runner_id', type=int, help='Runner collecting the data', required=True )
     parser.add_argument('--lang', help='Runner collecting the data', default = 'hye')
-    parser.add_argument('--index_dir', default='/content/drive/MyDrive/commoncrowl')
-    parser.add_argument('--data_dir', default='/content/drive/MyDrive/commoncrowl-data')
+    parser.add_argument('--index_dir', default='/content/drive/MyDrive/commoncrawl')
+    parser.add_argument('--data_dir', default='/content/drive/MyDrive/commoncrawl-data')
     parser.add_argument('--work_dir', default='/content')
     parser.add_argument('--save_on', type=int, default=3000)
 
