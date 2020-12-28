@@ -16,7 +16,9 @@ def clean(path, **kwargs):
     system('du ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
     system('rm ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
 
-    source_file_path = glob('/content/text/*.txt')[0]
+    first_file_path = glob('/content/text/extracted-*.txt')[0]
+    system('mv {first_file_path} /content/text/{batch_name}.txt'.format(batch_name = batch_name, first_file_path = first_file_path))
+    source_file_path = '/content/text/{batch_name}.txt'.format(batch_name = batch_name)
     system('du {source_file_path}'.format(source_file_path = source_file_path))
 
     source_file = open(source_file_path, 'r')
