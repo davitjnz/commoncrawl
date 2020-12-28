@@ -92,6 +92,7 @@ def clean(path, **kwargs):
     print('lines', lines, 'errors', errors)
     system('du {result_file_path}'.format(result_file_path = result_file_path))
     system('rm {source_file_path}'.format(source_file_path = source_file_path))
+    system('rm -rf ./{batch_name}'.format(batch_name = batch_name))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Clean the Data From CommonCrawl')
