@@ -12,13 +12,11 @@ def clean(path, **kwargs):
     batch_name = path.split('/')[-1].split('.')[0]
     system('mkdir ./{batch_name}'.format(batch_name = batch_name))
     system('cp {path} ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name, path = path))
-    system('tar -xf ./{batch_name}/{batch_name}.tar.gz --absolute-names'.format(batch_name = batch_name))
+    system('tar -xf ./{batch_name}/{batch_name}.tar.gz -C ./{batch_name}'.format(batch_name = batch_name))
     system('du ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
     system('rm ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
 
-    first_file_path = glob('/content/text/extracted-*.txt')[0]
-    system('mv {first_file_path} /content/text/{batch_name}.txt'.format(batch_name = batch_name, first_file_path = first_file_path))
-    source_file_path = '/content/text/{batch_name}.txt'.format(batch_name = batch_name)
+    source_file_path = glob('./{batch_name}/content/text/extracted-*.txt'.format(batch_name = batch_name))[0]
     system('du {source_file_path}'.format(source_file_path = source_file_path))
 
     source_file = open(source_file_path, 'r')
