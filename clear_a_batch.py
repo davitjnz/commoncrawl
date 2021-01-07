@@ -1,5 +1,7 @@
+# !/usr/bin/python
+# coding=utf-8
+
 from glob import glob
-from tqdm.notebook import tqdm
 from datetime import datetime
 import json
 from os import system
