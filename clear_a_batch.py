@@ -10,7 +10,7 @@ import subprocess
 import pandas as pd
 import re
 
-def clean(path, **kwargs):
+def clean(path, lang, **kwargs):
     batch_name = path.split('/')[-1].split('.')[0]
     system('mkdir ./{batch_name}'.format(batch_name = batch_name))
     system('cp {path} ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name, path = path))
@@ -24,8 +24,15 @@ def clean(path, **kwargs):
     source_file = open(source_file_path, 'r')
     result_file_path = './clear/{}.txt'.format(path.split('/')[-1].split('.')[0])
     result_file = open(result_file_path, 'a')
-
-    pattern_az = re.compile(r'[AaBbCcÇçDdEeƏəFfGgĞğHhXxIıİiJjKkQqLlMmNnOoÖöPpRrSsŞşTtUuÜüVvYyZz \!\?]')
+    
+    lang_patterns = {
+        'az': re.compile(r'[AaBbCcÇçDdEeƏəFfGgĞğHhXxIıİiJjKkQqLlMmNnOoÖöPpRrSsŞşTtUuÜüVvYyZz \!\?]'),
+        'hy': re.compile(r'[աԱբԲգԳդԴեԵզԶէԷըԸթԹժԺիԻլԼխԽծԾկԿհՀձՁղՂճՃմՄյՅնՆշՇոՈչՉպՊջՋռՌսՍվՎտՏրՐցՑւՒփՓքՔօՕֆՖ \!\?]')
+    }
+    uppercase_characters = {
+        'az': 'ABCÇDEƏFGĞHXIİJKQLMNOÖPRSŞTUÜVYZ',
+        'hy': 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖ'
+    }
     re_brakets = '\[.*\]|\(.*\)'
     re_urls = '(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}([-a-zA-Z0-9()@:%_\+.~#?&\/=]*))'
     re_files = '(file:\/\/?\/([\.\w\/]*))'
@@ -57,7 +64,7 @@ def clean(path, **kwargs):
         line = re.sub(remove_pattern, '',line)
         line = re.sub(multi_space_pattern, ' ',line)
 
-        if len(line) <= 20 or len(pattern_az.findall(line))/len(line) < 0.7 or line in cach_for_dublicates:
+        if len(line) <= 20 or len(lang_patterns[lang].findall(line))/len(line) < 0.7 or line in cach_for_dublicates:
             if prev_line:
                 
                 result_file.write(prev_line + '\n')
@@ -78,7 +85,7 @@ def clean(path, **kwargs):
             continue
 
         
-        if prev_line and line[0] in 'ABCÇDEƏFGĞHXIİJKQLMNOÖPRSŞTUÜVYZ':
+        if prev_line and line[0] in uppercase_characters[lang]:
             result_file.write(prev_line + '\n')
             cach_for_dublicates.append(prev_line)
             cach_for_dublicates = cach_for_dublicates[-10000:]
@@ -99,6 +106,7 @@ def clean(path, **kwargs):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Clean the Data From CommonCrawl')
     parser.add_argument('--batch_path', type=str, help='Batch path', required=True )
+    parser.add_argument('--lang', type=str, help='Language of the batch text', required=True, default='az' )
 
 
     args = parser.parse_args()
@@ -107,4 +115,4 @@ if __name__ == '__main__':
     for arg_name in [ arg_name for arg_name in vars(args) if getattr(args, arg_name)]:
         kwargs[arg_name] = getattr(args, arg_name)
         
-    clean(args.batch_path, **kwargs)
+    clean(args.batch_path, args.lang, **kwargs)
