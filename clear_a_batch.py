@@ -14,7 +14,7 @@ def clean(path, lang, **kwargs):
     batch_name = path.split('/')[-1].split('.')[0]
     system('mkdir ./{batch_name}'.format(batch_name = batch_name))
     system('cp {path} ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name, path = path))
-    system('tar -xf ./{batch_name}/{batch_name}.tar.gz -C ./{batch_name} --absolute-names'.format(batch_name = batch_name))
+    system('tar -xf ./{batch_name}/{batch_name}.tar.gz -C ./{batch_name}'.format(batch_name = batch_name))
     system('du ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
     system('rm ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
         
