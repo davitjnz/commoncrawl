@@ -112,7 +112,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     kwargs = {}
-    for arg_name in [ arg_name for arg_name in vars(args) if getattr(args, arg_name)]:
-        kwargs[arg_name] = getattr(args, arg_name)
+#     for arg_name in [ arg_name for arg_name in vars(args) if getattr(args, arg_name)]:
+#         kwargs[arg_name] = getattr(args, arg_name)
         
     clean(args.batch_path, args.lang, **kwargs)
