@@ -66,35 +66,22 @@ def clean(path, lang, **kwargs):
 
         if len(line) <= 20 or len(lang_patterns[lang].findall(line))/len(line) < 0.7 or line in cach_for_dublicates:
             if prev_line:
-                
-                result_file.write(prev_line + '\n')
-                cach_for_dublicates.append(prev_line)
-                cach_for_dublicates = cach_for_dublicates[-10000:]
-                
+                cach_for_dublicates = uppend_to_file(result_file, prev_line, cach_for_dublicates)
                 prev_line = ''
             continue
-        
-        # lines_raw.append(line)
 
         if line[-1] in '.!?;':
             concated_lines = (prev_line + ' ' if prev_line else '') + line
-            result_file.write(concated_lines + '\n')
-            cach_for_dublicates.append(concated_lines)
-            cach_for_dublicates = cach_for_dublicates[-10000:]
+            cach_for_dublicates = uppend_to_file(result_file, concated_lines, cach_for_dublicates)
             prev_line = ''
             continue
 
-        
         if prev_line and line[0] in uppercase_characters[lang]:
-            result_file.write(prev_line + '\n')
-            cach_for_dublicates.append(prev_line)
-            cach_for_dublicates = cach_for_dublicates[-10000:]
-            
+            cach_for_dublicates = uppend_to_file(result_file, prev_line, cach_for_dublicates)
             prev_line = line
             continue
         
         prev_line += line
-        
         
     source_file.close()
     result_file.close()
@@ -102,6 +89,12 @@ def clean(path, lang, **kwargs):
     system('du {result_file_path}'.format(result_file_path = result_file_path))
     system('rm {source_file_path}'.format(source_file_path = source_file_path))
     system('rm -rf ./{batch_name}'.format(batch_name = batch_name))
+
+def uppend_to_file(result_file, text, cach_for_dublicates):
+    result_file.write(prev_line + '\n')
+    cach_for_dublicates.append(prev_line)
+    cach_for_dublicates = cach_for_dublicates[-10000:]
+    return cach_for_dublicates
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Clean the Data From CommonCrawl')
