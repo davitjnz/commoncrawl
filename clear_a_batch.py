@@ -91,8 +91,8 @@ def clean(path, lang, **kwargs):
     system('rm -rf ./{batch_name}'.format(batch_name = batch_name))
 
 def uppend_to_file(result_file, text, cach_for_dublicates):
-    result_file.write(prev_line + '\n')
-    cach_for_dublicates.append(prev_line)
+    result_file.write(text + '\n')
+    cach_for_dublicates.append(text)
     cach_for_dublicates = cach_for_dublicates[-10000:]
     return cach_for_dublicates
 
