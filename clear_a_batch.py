@@ -14,10 +14,11 @@ def clean(path, lang, **kwargs):
     batch_name = path.split('/')[-1].split('.')[0]
     system('mkdir ./{batch_name}'.format(batch_name = batch_name))
     system('cp {path} ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name, path = path))
-    system('tar -xf ./{batch_name}/{batch_name}.tar.gz -C ./{batch_name}'.format(batch_name = batch_name))
+    system('tar -xf ./{batch_name}/{batch_name}.tar.gz -C ./{batch_name} --absolute-names'.format(batch_name = batch_name))
     system('du ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
     system('rm ./{batch_name}/{batch_name}.tar.gz'.format(batch_name = batch_name))
-
+    system('rm -rf ./{batch_name}'.format(batch_name = batch_name))
+    
     source_file_path = glob('./{batch_name}/content/text/extracted-*.txt'.format(batch_name = batch_name))[0]
     system('du {source_file_path}'.format(source_file_path = source_file_path))
 
@@ -101,7 +102,6 @@ def clean(path, lang, **kwargs):
     print('lines', lines, 'errors', errors)
     system('du {result_file_path}'.format(result_file_path = result_file_path))
     system('rm {source_file_path}'.format(source_file_path = source_file_path))
-    system('rm -rf ./{batch_name}'.format(batch_name = batch_name))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Clean the Data From CommonCrawl')
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     kwargs = {}
-#     for arg_name in [ arg_name for arg_name in vars(args) if getattr(args, arg_name)]:
-#         kwargs[arg_name] = getattr(args, arg_name)
+    # for arg_name in [ arg_name for arg_name in vars(args) if getattr(args, arg_name)]:
+    #     kwargs[arg_name] = getattr(args, arg_name)
         
     clean(args.batch_path, args.lang, **kwargs)
